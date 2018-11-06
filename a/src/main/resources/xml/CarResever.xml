@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.szxs.dao.CarReseverDao">
+
+    <resultMap id="StudentMap" type="CarResever">
+        <result column="resever_id" property="reseverId"/>
+        <result column="status" property="status"/>
+        <association property="carInfo" javaType="CarInfo">
+            <result column="rid" property="carId"/>
+            <result column="car_type" property="carType"/>
+            <result column="capacity" property="capacity"/>
+            <result column="manufacturer" property="manufacturer"/>
+            <result column="produce_date" property="produceDate"/>
+            <result column="price" property="price"/>
+        </association>
+    </resultMap>
+    <select id="queryCarResever" resultMap="StudentMap">
+        select r.*,r.car_id rid,i.*
+        from car_resever r ,car_info i
+        where r.car_id = i.car_id
+        <choose>
+            <when test="a==1">
+                and i.car_type like concat('%',#{b},'%')
+            </when>
+            <when test="a==2">
+                and i.capacity like concat('%',#{b},'%')
+            </when>
+            <when test="a==3">
+                and i.manufacturer like concat('%',#{b},'%')
+            </when>
+            <when test="a==4">
+                and i.produce_date like concat('%',#{b},'%')
+            </when>
+        </choose>
+        order by r.resever_id limit #{offset},#{pageSize}
+    </select>
+    <select id="selectCarReseverRows" resultType="_int">
+        select count(1)
+        from car_resever r ,car_info i
+        where r.car_id = i.car_id
+        <choose>
+            <when test="a==1">
+                and i.car_type like concat('%',#{b},'%')
+            </when>
+            <when test="a==2">
+                and i.capacity like concat('%',#{b},'%')
+            </when>
+            <when test="a==3">
+                and i.manufacturer like concat('%',#{b},'%')
+            </when>
+        </choose>
+    </select>
+    <update id="updateCarResever">
+        update car_resever set status=1 where car_resever.resever_id=#{resever_id}
+    </update>
+
+</mapper>
